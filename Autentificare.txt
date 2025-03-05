@@ -1,0 +1,39 @@
+#!/bin/bash
+
+dirBaza=$(pwd)
+fisierUtilizatori="$dirBaza/utilizatori.csv"
+fisierUtilizatoriLogati="$dirBaza/useriLogati.txt"
+
+login() {
+  echo "Autentificare utilizator:"
+  read -p "Nume si prenume: " nume
+
+  if ! grep -q "^$nume," "$fisierUtilizatori"; then
+    echo "Utilizatorul nu exista!"
+    return
+  fi
+
+  if grep -q "^$nume" "$fisierUtilizatoriLogati"; then
+    echo "Utilizatorul este deja autentificat!"
+    return
+  fi
+
+  read -sp "Introduceți parola: " parola
+  echo
+  parolaRetinuta=$(grep "^$nume," "$fisierUtilizatori" | cut -d ',' -f 3)
+  if [ "$parola" == "$parolaRetinuta" ]; then
+    echo "$nume" >> "$fisierUtilizatoriLogati"
+    directorUtilizator=$(grep "^$nume," "$fisierUtilizatori" | cut -d ',' -f 7)
+    lastLogin=$(date '+%Y-%m-%d %H:%M:%S')
+
+    echo "Ultima logare: $lastLogin" > "$directorUtilizator/ultimaLogare.txt"
+
+    sed -i "s|^\($nume,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\),.*|\1,$lastLogin|" "$fisierUtilizatori"
+    echo "Autentificare reușită! Bine ați venit, $nume!"
+  else
+    echo "Parolă incorectă!"
+  fi
+}
+
+login
+

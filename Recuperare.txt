@@ -1,0 +1,33 @@
+#!/bin/bash
+
+dirBaza=$(pwd)
+fisierUtilizatori="$dirBaza/utilizatori.csv"
+
+echo "Recuperare parola:"
+
+read -p "Introduceti email-ul asociat contului: " email
+if ! grep -q ",$email," "$fisierUtilizatori"; then
+  echo "Email-ul nu exista in baza de date!"
+  exit 1
+fi
+
+read -sp "Introduceti noua parola (minim 8 caractere): " parola
+echo
+while [[ ${#parola} -lt 8 ]]; do
+  echo "Parola invalida. Trebuie sa aiba minim 8 caractere."
+  read -sp "Introduceti noua parola (minim 8 caractere): " parola
+  echo
+done
+
+read -sp "Confirmati noua parola: " parolaConfirmata
+echo
+while [ "$parola" != "$parolaConfirmata" ]; do
+  echo "Parolele nu sunt identice!"
+  read -sp "Introduceti noua parola (minim 8 caractere): " parola
+  echo
+  read -sp "Confirmati noua parola: " parolaConfirmata
+  echo
+done
+
+sed -i "s|\([^,]*\),$email,\([^,]*\),\([^,]*\)|\1,$email,$parola,\3|" "$fisierUtilizatori"
+echo "Parola a fost resetata cu succes!"

@@ -1,0 +1,55 @@
+#!/bin/bash
+
+dirBaza=$(pwd)
+fisierUtilizatori="$dirBaza/utilizatori.csv"
+
+echo "Inregistrare utilizator nou:"
+
+read -p "Nume si prenume: " nume
+if grep -q "^$nume," "$fisierUtilizatori"; then
+  echo "Utilizatorul deja exista!"
+  exit 1
+fi
+
+read -p "Email: " email
+while [[ ! "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$ ]]; do
+  echo "Email invalid. Introduceti din nou."
+  read -p "Email: " email
+done
+
+read -sp "Parola (minim 8 caractere): " parola
+echo
+while [[ ${#parola} -lt 8 ]]; do
+  echo "Parola invalida. Trebuie sa aiba minim 8 caractere."
+  read -sp "Parola (minim 8 caractere): " parola
+  echo
+done
+
+read -sp "Confirmați parola: " parolaConfirmata
+echo
+while [ "$parola" != "$parolaConfirmata" ]; do
+  echo "Parolele nu sunt identice!"
+  read -sp "Parola (minim 8 caractere): " parola
+  echo
+  read -sp "Confirmați parola: " parolaConfirmata
+  echo
+done
+
+read -p "Numar de telefon: " telefon
+while [[ ! "$telefon" =~ ^[0-9]+$ ]]; do
+  echo "Numarul de telefon poate contine doar cifre. Introduceti din nou."
+  read -p "Numar de telefon: " telefon
+done
+
+read -p "Genul (M - Masculin, F - Feminin, P - Prefer sa nu zic): " gen
+while [[ ! "$gen" =~ ^[MmFfPp]$ ]]; do
+  echo "Genul trebuie să fie M, F sau P. Introduceți din nou."
+  read -p "Genul (M - Masculin, F - Feminin, P - Prefer sa nu zic): " gen
+done
+
+id=$(uuidgen)
+directorUtilizator="$dirBaza/home/$nume"
+
+mkdir -p "$directorUtilizator"
+echo "$nume,$email,$parola,$telefon,$gen,$id,$directorUtilizator" >> "$fisierUtilizatori"
+echo "Utilizatorul $nume a fost înregistrat cu succes!"

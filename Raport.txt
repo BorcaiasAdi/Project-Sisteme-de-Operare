@@ -1,0 +1,31 @@
+#!/bin/bash
+
+baseDir=$(pwd)
+fisierUtilizatori="$baseDir/utilizatori.csv"
+
+raport() {
+  echo "Generare raport utilizator:"
+  read -p "Nume si prenume: " nume
+
+  if ! grep -q "^$nume," "$fisierUtilizatori"; then
+    echo "Utilizatorul nu exista!"
+    return
+  fi
+
+  directorUtilizator=$(grep "^$nume," "$fisierUtilizatori" | cut -d ',' -f 6)
+
+  {
+    nrFisiere=$(find "$directorUtilizator" -type f | wc -l)
+    nrDirectoare=$(find "$directorUtilizator" -type d | wc -l)
+    dimTotala=$(du -sh "$directorUtilizator" | cut -f1)
+    raportFisier="$directorUtilizator/raport.txt"
+
+    echo "Numar fisiere: $nrFisiere" > "$raportFisier"
+    echo "Numar directoare: $nrDirectoare" >> "$raportFisier"
+    echo "Dimensiune totala: $dimTotala" >> "$raportFisier"
+
+    echo "Raportul se generează în fundal. Acesta va fi salvat în $directorUtilizator/raport.txt"
+  } &
+}
+
+raport

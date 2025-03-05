@@ -1,0 +1,22 @@
+#!/bin/bash
+
+baseDir=$(pwd)
+fisierUtilizatori="$baseDir/utilizatori.csv"
+fisierUtilizatoriLogati="$baseDir/utilizatori_logati.txt"
+
+echo "Deconectare utilizator:"
+read -p "Nume utilizator: " nume
+
+if ! grep -q "^$nume," "$fisierUtilizatori"; then
+  echo "Utilizatorul nu exista!"
+  return
+fi
+
+if ! grep -q "^$nume$" "$fisierUtilizatoriLogati"; then
+  echo "Utilizatorul nu este logat!"
+  exit 1
+fi
+
+grep -v "^$nume$" "$fisierUtilizatoriLogati" > "$fisierUtilizatoriLogati.tmp"
+mv "$fisierUtilizatoriLogati.tmp" "$fisierUtilizatoriLogati"
+echo "Utilizatorul $nume a fost deconectat!"

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+dirBaza=$(pwd)
+fisierUtilizatori="$dirBaza/utilizatori.csv"
+fisierUtilizatoriLogati="$dirBaza/utilizatori_logati.txt"
+
+echo "Stergere utilizator:"
+
+read -p "Nume si prenume: " nume
+if ! grep -q "^$nume," "$fisierUtilizatori"; then
+  echo "Utilizatorul nu exista!"
+  exit 1
+fi
+
+read -sp "Introduceti parola: " parola
+echo
+parolaRetinuta=$(grep "^$nume," "$fisierUtilizatori" | cut -d ',' -f 3)
+if [ "$parola" != "$parolaRetinuta" ]; then
+  echo "Parola incorecta!"
+  exit 1
+fi
+
+grep -v "^$nume," "$fisierUtilizatori" > "$fisierUtilizatori.tmp"
+mv "$fisierUtilizatori.tmp" "$fisierUtilizatori"
+
+if grep -q "^$nume$" "$fisierUtilizatoriLogati"; then
+  grep -v "^$nume$" "$fisierUtilizatoriLogati" > "$fisierUtilizatoriLogati.tmp"
+  mv "$fisierUtilizatoriLogati.tmp" "$fisierUtilizatoriLogati"
+fi
+
+directorUtilizator=$(grep "^$nume," "$fisierUtilizatori" | cut -d ',' -f 6)
+rm -rf "$directorUtilizator"
+
+echo "Utilizatorul $nume a fost sters cu succes!"

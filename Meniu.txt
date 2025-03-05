@@ -1,0 +1,69 @@
+#!/bin/bash
+
+dirBaza=$(pwd)
+fisierUtilizatori="$dirBaza/utilizatori.csv"
+fisierUtilizatoriLogati="$dirBaza/utilizatori_logati.txt"
+loggedInUsers=()
+
+if [ ! -f "$fisierUtilizatori" ]; then
+  echo "Nume,Email,Parola,Telefon,ID,Gen,Director_Home,Ultimul_Login" > "$fisierUtilizatori"
+fi
+
+if [ ! -f "$fisierUtilizatoriLogati" ]; then
+  touch "$fisierUtilizatoriLogati"
+fi
+
+ok=1
+while [ $ok -eq 1 ]; do
+  echo "Selectati o optiune:"
+  echo "1. Inregistrare utilizator"
+  echo "2. Autentificare utilizator"
+  echo "3. Deconectare utilizator"
+  echo "4. Generare raport utilizator"
+  echo "5. Resetare parola"
+  echo "6. Stergere utilizator"
+  echo "7. Iesire"
+  read -p "Optiune: " optiune
+
+  if [ "$optiune" -eq 1 ]; then
+    ./inregistrare.sh
+    if [ $? -ne 0 ]; then
+      echo "Eroare la inregistrarea utilizatorului!"
+      ok=0
+    fi
+  elif [ "$optiune" -eq 2 ]; then
+    ./login.sh
+    if [ $? -ne 0 ]; then
+      echo "Eroare la autentificarea utilizatorului!"
+      ok=0
+    fi
+  elif [ "$optiune" -eq 3 ]; then
+    ./logout.sh
+    if [ $? -ne 0 ]; then
+      echo "Eroare la deconectarea utilizatorului!"
+      ok=0
+    fi
+  elif [ "$optiune" -eq 4 ]; then
+    ./raport.sh
+    sleep 2
+  elif [ "$optiune" -eq 5 ]; then
+    ./recuperare.sh
+    if [ $? -ne 0 ]; then
+      echo "Eroare la resetarea parolei!"
+      ok=0
+    fi
+  elif [ "$optiune" -eq 6 ]; then
+    ./stergere.sh
+    if [ $? -ne 0 ]; then
+      echo "Eroare la stergerea utilizatorului!"
+      ok=0
+    fi
+  elif [ "$optiune" -eq 7 ]; then
+    ok=0
+  else
+    echo "Optiune invalida!"
+  fi
+done
+
+echo "Programul s-a incheiat."
+
