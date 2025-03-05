@@ -1,1 +1,1 @@
-Un proiect care simuleaza crearea unui cont, logarea, delogarea, vizualizarea activitatii, recuperarea de cont intr-o aplicatie,
+Un proiect care simuleaza crearea unui cont, logarea, delogarea, vizualizarea activitatii, stergerea si recuperarea unui cont intr-un terminal linux, toate aceste optiuni fiind accesibile intr-un singur meniu.
